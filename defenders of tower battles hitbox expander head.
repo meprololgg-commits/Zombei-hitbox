@@ -39,7 +39,7 @@ Frame.BackgroundTransparency = 0.2
 Frame.Visible = true
 FrameCorner.CornerRadius = UDim.new(0, 10)
 
--- Collapse Button Configuration
+
 CollapseButton.Size = UDim2.new(0, 160, 0, 20)
 CollapseButton.Position = UDim2.new(0, 0, 0, 0)
 CollapseButton.Text = "▼"
@@ -103,6 +103,7 @@ EnableButton.MouseButton1Click:Connect(function()
 				head.BrickColor = originalData.brickColor
 				head.Material = originalData.material
 				head.CanCollide = originalData.canCollide
+				head.Massless= false
 			end
 		end
 
@@ -129,7 +130,8 @@ RunService.RenderStepped:Connect(function()
 				local Head = zombie.Head
 				local zombieKey = zombie:GetFullName()
 
-			
+				Head.Massless= true 
+				
 				if not OriginalZombieData[zombieKey] then
 					OriginalZombieData[zombieKey] = {
 						head = Head,
@@ -145,6 +147,7 @@ RunService.RenderStepped:Connect(function()
 				Head.Transparency = 0.5
 				Head.Material = Enum.Material.Neon
 				Head.CanCollide = false
+				
 			end
 		end
 	end
