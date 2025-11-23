@@ -1,0 +1,156 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+
+local LocalPlayer = Players.LocalPlayer
+
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local FrameCorner = Instance.new("UICorner")
+local TextBox = Instance.new("TextBox")
+local TextBoxCorner = Instance.new("UICorner")
+local EnableButton = Instance.new("TextButton")
+local EnableButtonCorner = Instance.new("UICorner")
+local CollapseButton = Instance.new("TextButton")
+local CollapseButtonCorner = Instance.new("UICorner")
+
+local isCollapsed = false
+
+ScreenGui.Parent = LocalPlayer.PlayerGui
+Frame.Parent = ScreenGui
+TextBox.Parent = Frame
+EnableButton.Parent = Frame
+CollapseButton.Parent = Frame
+FrameCorner.Parent = Frame
+TextBoxCorner.Parent = TextBox
+EnableButtonCorner.Parent = EnableButton
+CollapseButtonCorner.Parent = CollapseButton
+
+Frame.Size = UDim2.new(0, 160, 0, 110)
+Frame.Position = UDim2.new(0.5, -80, 0.5, -55)
+Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
+Frame.ClipsDescendants = true
+Frame.BackgroundTransparency = 0.2
+Frame.Visible = true
+FrameCorner.CornerRadius = UDim.new(0, 10)
+
+-- Collapse Button Configuration
+CollapseButton.Size = UDim2.new(0, 160, 0, 20)
+CollapseButton.Position = UDim2.new(0, 0, 0, 0)
+CollapseButton.Text = "▼"
+CollapseButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+CollapseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CollapseButtonCorner.CornerRadius = UDim.new(0, 10)
+
+
+TextBox.Size = UDim2.new(0, 140, 0, 25)
+TextBox.Position = UDim2.new(0, 10, 0, 25)
+TextBox.Text = "10"
+TextBox.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextBoxCorner.CornerRadius = UDim.new(0, 10)
+
+
+EnableButton.Size = UDim2.new(0, 140, 0, 25)
+EnableButton.Position = UDim2.new(0, 10, 0, 55)
+EnableButton.Text = "Enable Hitbox"
+EnableButton.BackgroundColor3 = Color3.fromRGB(90, 90, 90)
+EnableButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+EnableButtonCorner.CornerRadius = UDim.new(0, 10)
+
+
+_G.HeadSize = tonumber(TextBox.Text) or 10
+_G.Disabled = true
+
+
+local OriginalZombieData = {}
+
+local PlayerList = {}
+
+local function UpdatePlayerList()
+	PlayerList = {}
+	for _, Player in ipairs(Players:GetPlayers()) do
+		if (Player ~= LocalPlayer) and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+			table.insert(PlayerList, Player)
+		end
+	end
+end
+
+TextBox.FocusLost:Connect(function()
+	local InputValue = tonumber(TextBox.Text)
+	if InputValue then
+		_G.HeadSize = InputValue
+	else
+		TextBox.Text = tostring(_G.HeadSize)
+	end
+end)
+
+EnableButton.MouseButton1Click:Connect(function()
+	_G.Disabled = not _G.Disabled
+	EnableButton.Text = (_G.Disabled and "Enable Hitbox") or "Disable Hitbox"
+
+	if _G.Disabled then
+		for zombieKey, originalData in pairs(OriginalZombieData) do
+			local head = originalData.head
+			if head and head.Parent then
+				head.Size = originalData.size
+				head.Transparency = originalData.transparency
+				head.BrickColor = originalData.brickColor
+				head.Material = originalData.material
+				head.CanCollide = originalData.canCollide
+			end
+		end
+
+		OriginalZombieData = {}
+	end
+end)
+
+CollapseButton.MouseButton1Click:Connect(function()
+	isCollapsed = not isCollapsed
+
+	local TargetSize = (isCollapsed and UDim2.new(0, 160, 0, 20)) or UDim2.new(0, 160, 0, 110)
+
+	local TweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	local Tween = TweenService:Create(Frame, TweenInfo, {Size = TargetSize})
+
+	Tween:Play()
+	CollapseButton.Text = (isCollapsed and "▲") or "▼"
+end)
+
+RunService.RenderStepped:Connect(function()
+	if not _G.Disabled then
+		for _, zombie in workspace:GetChildren() do
+			if zombie and zombie:FindFirstChild("HumanoidRootPart") and zombie:FindFirstChild("Head") and (zombie:FindFirstChild("IsZombie") or zombie:FindFirstChild("isZombie")) then
+				local Head = zombie.Head
+				local zombieKey = zombie:GetFullName()
+
+			
+				if not OriginalZombieData[zombieKey] then
+					OriginalZombieData[zombieKey] = {
+						head = Head,
+						size = Head.Size,
+						transparency = Head.Transparency,
+						brickColor = Head.BrickColor,
+						material = Head.Material,
+						canCollide = Head.CanCollide
+					}
+				end
+
+				Head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+				Head.Transparency = 0.5
+				Head.Material = Enum.Material.Neon
+				Head.CanCollide = false
+			end
+		end
+	end
+end)
+
+while true do
+	UpdatePlayerList()
+	wait(1)
+end
