@@ -18,7 +18,7 @@ local CollapseButtonCorner = Instance.new("UICorner")
 
 local isCollapsed = false
 
-ScreenGui.Parent = LocalPlayer.PlayerGui
+ScreenGui.Parent = game.CoreGui
 Frame.Parent = ScreenGui
 TextBox.Parent = Frame
 EnableButton.Parent = Frame
