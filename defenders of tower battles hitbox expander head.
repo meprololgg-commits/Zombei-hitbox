@@ -125,7 +125,7 @@ end)
 RunService.RenderStepped:Connect(function()
 	if not _G.Disabled then
 		for _, zombie in workspace:GetChildren() do
-			if zombie and zombie:FindFirstChild("HumanoidRootPart") and zombie:FindFirstChild("Head") and (zombie:FindFirstChild("IsZombie") or zombie:FindFirstChild("isZombie")) then
+			if zombie and zombie:FindFirstChild("HumanoidRootPart") and zombie:FindFirstChild("Head") and (zombie:FindFirstChild("IsZombie") or zombie:FindFirstChild("isZombie") or zombie:FindFirstChild("NormalZomb") or zombie:FindFirstChild("Moan")) then
 				local Head = zombie.Head
 
 				if not OriginalZombieData[zombie] then
@@ -137,7 +137,7 @@ RunService.RenderStepped:Connect(function()
 						material = Head.Material,
 						canCollide = Head.CanCollide
 					}
-					
+
 					Head.Massless= true 
 					Head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
 					Head.Transparency = 0.5
