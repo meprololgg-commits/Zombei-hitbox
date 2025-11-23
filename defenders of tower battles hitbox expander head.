@@ -125,7 +125,7 @@ end)
 RunService.RenderStepped:Connect(function()
 	if not _G.Disabled then
 		for _, zombie in workspace:GetChildren() do
-			if zombie and zombie:FindFirstChild("HumanoidRootPart") and zombie:FindFirstChild("Head") and (zombie:FindFirstChild("IsZombie") or zombie:FindFirstChild("isZombie") or zombie:FindFirstChild("NormalZomb") or zombie:FindFirstChild("Moan")) then
+			if zombie and zombie:FindFirstChild("HumanoidRootPart") and zombie:FindFirstChild("Head") and (zombie:FindFirstChild("IsZombie") or zombie:FindFirstChild("isZombie") or (zombie:FindFirstChild("NormalZomb") or zombie:FindFirstChild("Moan"))) then
 				local Head = zombie.Head
 
 				if not OriginalZombieData[zombie] then
