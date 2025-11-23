@@ -95,7 +95,7 @@ EnableButton.MouseButton1Click:Connect(function()
 	EnableButton.Text = (_G.Disabled and "Enable Hitbox") or "Disable Hitbox"
 
 	if _G.Disabled then
-		for zombieKey, originalData in pairs(OriginalZombieData) do
+		for zombieKey, originalData in OriginalZombieData do
 			local head = originalData.head
 			if head and head.Parent then
 				head.Size = originalData.size
@@ -103,7 +103,6 @@ EnableButton.MouseButton1Click:Connect(function()
 				head.BrickColor = originalData.brickColor
 				head.Material = originalData.material
 				head.CanCollide = originalData.canCollide
-				head.Massless= false
 			end
 		end
 
@@ -128,12 +127,9 @@ RunService.RenderStepped:Connect(function()
 		for _, zombie in workspace:GetChildren() do
 			if zombie and zombie:FindFirstChild("HumanoidRootPart") and zombie:FindFirstChild("Head") and (zombie:FindFirstChild("IsZombie") or zombie:FindFirstChild("isZombie")) then
 				local Head = zombie.Head
-				local zombieKey = zombie:GetFullName()
 
-				Head.Massless= true 
-				
-				if not OriginalZombieData[zombieKey] then
-					OriginalZombieData[zombieKey] = {
+				if not OriginalZombieData[zombie] then
+					OriginalZombieData[zombie] = {
 						head = Head,
 						size = Head.Size,
 						transparency = Head.Transparency,
@@ -141,13 +137,13 @@ RunService.RenderStepped:Connect(function()
 						material = Head.Material,
 						canCollide = Head.CanCollide
 					}
+					
+					Head.Massless= true 
+					Head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+					Head.Transparency = 0.5
+					Head.Material = Enum.Material.Neon
+					Head.CanCollide = false
 				end
-
-				Head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
-				Head.Transparency = 0.5
-				Head.Material = Enum.Material.Neon
-				Head.CanCollide = false
-				
 			end
 		end
 	end
