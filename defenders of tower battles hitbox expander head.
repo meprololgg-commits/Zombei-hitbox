@@ -4,7 +4,6 @@ local TweenService = game:GetService("TweenService")
 
 local LocalPlayer = Players.LocalPlayer
 
-
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local FrameCorner = Instance.new("UICorner")
@@ -71,6 +70,12 @@ local OriginalZombieData = {}
 
 local PlayerList = {}
 
+function enemyornot(zombie)
+	if zombie and zombie:FindFirstChild("HumanoidRootPart") and zombie:FindFirstChild("Head") and (zombie:FindFirstChild("IsZombie") or zombie:FindFirstChild("isZombie") or (zombie:FindFirstChild("NormalZomb") or zombie:FindFirstChild("Moan") and not zombie:FindFirstChild("IsNPC")))  then
+		return true
+	end
+end
+
 local function UpdatePlayerList()
 	PlayerList = {}
 	for _, Player in ipairs(Players:GetPlayers()) do
@@ -123,8 +128,9 @@ end)
 
 RunService.RenderStepped:Connect(function()
 	if not _G.Disabled then
+		
 		for _, zombie in workspace:GetChildren() do
-			if zombie and zombie:FindFirstChild("HumanoidRootPart") and zombie:FindFirstChild("Head") and (zombie:FindFirstChild("IsZombie") or zombie:FindFirstChild("isZombie") or (zombie:FindFirstChild("NormalZomb") or zombie:FindFirstChild("Moan") and not zombie:FindFirstChild("IsNPC"))) then
+			if enemyornot(zombie) then
 				local Head = zombie.Head
 
 				if not OriginalZombieData[zombie] then
@@ -142,6 +148,31 @@ RunService.RenderStepped:Connect(function()
 					Head.Transparency = 0.5
 					Head.Material = Enum.Material.Neon
 					Head.CanCollide = false
+				end
+			end
+		end
+		
+		if workspace:FindFirstChild("HumanoidParts") and workspace.HumanoidParts:FindFirstChild("Enemies") then
+			for _, zombie in workspace.HumanoidParts.Enemies:GetChildren() do
+				if enemyornot(zombie) then
+					local Head = zombie.Head
+
+					if not OriginalZombieData[zombie] then
+						OriginalZombieData[zombie] = {
+							head = Head,
+							size = Head.Size,
+							transparency = Head.Transparency,
+							brickColor = Head.BrickColor,
+							material = Head.Material,
+							canCollide = Head.CanCollide
+						}
+
+						Head.Massless= true 
+						Head.Size = Vector3.new(_G.HeadSize, _G.HeadSize, _G.HeadSize)
+						Head.Transparency = 0.5
+						Head.Material = Enum.Material.Neon
+						Head.CanCollide = false
+					end
 				end
 			end
 		end
