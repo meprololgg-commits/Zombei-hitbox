@@ -128,9 +128,10 @@ end)
 
 RunService.RenderStepped:Connect(function()
 	if not _G.Disabled then
-		
+
 		for _, zombie in workspace:GetChildren() do
 			if enemyornot(zombie) then
+				local RootPart = zombie.HumanoidRootPart
 				local Head = zombie.Head
 
 				if not OriginalZombieData[zombie] then
@@ -148,15 +149,17 @@ RunService.RenderStepped:Connect(function()
 					Head.Transparency = 0.5
 					Head.Material = Enum.Material.Neon
 					Head.CanCollide = false
+					RootPart.Massless= false
 				end
 			end
 		end
-		
+
 		if workspace:FindFirstChild("HumanoidParts") and workspace.HumanoidParts:FindFirstChild("Enemies") then
 			for _, zombie in workspace.HumanoidParts.Enemies:GetChildren() do
 				if enemyornot(zombie) then
 					local Head = zombie.Head
-
+					local RootPart = zombie.HumanoidRootPart
+					
 					if not OriginalZombieData[zombie] then
 						OriginalZombieData[zombie] = {
 							head = Head,
@@ -172,6 +175,7 @@ RunService.RenderStepped:Connect(function()
 						Head.Transparency = 0.5
 						Head.Material = Enum.Material.Neon
 						Head.CanCollide = false
+						RootPart.Massless= false
 					end
 				end
 			end
